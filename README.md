@@ -6,65 +6,89 @@ Projeto Conceitual de Banco de Dados para uma oficina
 
 Este projeto consiste no desenvolvimento de um **modelo conceitual de banco de dados** para um sistema de gerenciamento de ordens de serviço (OS) em uma oficina mecânica. O objetivo é fornecer uma estrutura robusta e escalável para gerenciar clientes, veículos, equipes de mecânicos, serviços, peças e ordens de serviço.
 
-## Entidades Principais
+## 🏗️ Estrutura do Banco de Dados ##
+O banco de dados é composto por diversas tabelas interligadas para garantir um gerenciamento completo dos serviços da oficina. Abaixo estão as principais tabelas e seus propósitos:
 
-### 1. Clientes
-- Armazena informações sobre os clientes da oficina.
-- Atributos: `IdClientes`, `Nome`, `Endereço`, `Veículos_idVeículos`.
+## 🔹 Clients (Clientes) ##
+Armazena as informações pessoais dos clientes que utilizam os serviços da oficina.
 
-### 2. Veículos
-- Armazena informações sobre os veículos dos clientes.
-- Atributos: `IdVeículos`, `Tipo`, `Placa`, `Marca`, `Modelo`, `Veículos_idVeículos`, `Equipe_idEquipe `, `Equipe_Mecânicos_idMecânicos `.
+### Campos: ###
 
-### 3. Equipe
-- Gerencia as equipes de mecânicos.
-- Atributos: `IdEquipe`, `Serviços`, `Mecânicos_idMecânicos`, `OS_idOS `.
+idClients (Chave Primária) - Identificador único do cliente.
+Fname - Primeiro nome do cliente.
+Mname - Nome do meio do cliente.
+Lname - Último nome do cliente.
+Adress - Endereço do cliente.
 
-### 4. OS (Ordem de Serviço)
-- Registra as ordens de serviço.
-- Atributos: `IdOS`, `Data de Emissão`, `Valor`, `Status`, `Data para conclusão`, `Valor da Peça`, `OS_idOS `.
+## 🔹 Mechanics (Mecânicos) ##
 
-### 5. Serviços
-- Armazena os serviços realizados.
-- Atributos: `IdServiços`, `Tipo Serviço`, `OS_idOS`.
+Registra informações dos mecânicos que realizam os serviços na oficina.
 
-### 6. Autorização
-- Gerencia a autorização dos clientes para execução dos serviços.
-- Atributos: `IdAutorização`, `cliente Autoriza Serviço`.
+### Campos: ###
+idMechanics (Chave Primária) - Identificador único do mecânico.
+Fname - Primeiro nome do mecânico.
+Mname - Nome do meio do mecânico.
+Lname - Último nome do mecânico.
+Adress - Endereço do mecânico.
+Expertise - Especialidade do mecânico (ex: Motor, Suspensão, Elétrica, etc.).
 
-### 7. Mecânicos
-- Armazena informações sobre os mecânicos.
-- Atributos: `IdMecânicos`, `Nome`, `Endereço`, `Especialidade`.
+## 🔹 Authorization (Autorizações de Serviço) ##
+Tabela responsável por armazenar a autorização do cliente para a execução do serviço.
 
-### 8. Valor do Serviço
--  Armazena os valores associados aos serviços.
--  Atributos: `idValor do Serviço `, `Valor do Mão de Obra`, `Valor do Serviço`.
+### Campos: ###
+idAuthorization (Chave Primária) - Identificador único da autorização.
+CustomerAuthorized - Booleano indicando se o cliente autorizou o serviço.
 
-## Relacionamentos
-    Clientes e Veículos:
+## 🔹 ServiceOrder (Ordens de Serviço - OS) ##
+Registra as ordens de serviço abertas na oficina.
 
-        Um cliente pode ter vários veículos, e um veículo pertence a um único cliente.
+### Campos: ###
+idSO (Chave Primária) - Identificador único da ordem de serviço.
+IssueDate - Data de abertura da OS.
+Price - Valor total do serviço.
+StatusSO - Status da ordem de serviço (Em espera, Autorizado, Finalizado, Cancelado).
+ConclusionDate - Data de conclusão do serviço.
+PieceValue - Valor das peças utilizadas na OS.
 
-    Veículos e Serviços:
+## 🔹 Services (Serviços) ##
+Tabela que contém os serviços realizados dentro das ordens de serviço.
 
-        Um veículo pode ter vários serviços associados, e um serviço está vinculado a um único veículo.
+### Campos: ###
+idService (Chave Primária) - Identificador único do serviço.
+Authorization_idAuthorization - Chave estrangeira para autorização do cliente.
+SO_idSO - Chave estrangeira para a ordem de serviço correspondente.
+LaborValue - Valor da mão de obra do serviço.
+TotalServiceValue - Valor total do serviço.
+ServiceType - Tipo de serviço realizado (Troca de óleo, Troca de peça, Checkup, Troca de pneus, etc.).
 
-    Veículos e Equipe:
+## 🔹 Team (Equipes de Trabalho) ##
+Registra quais mecânicos estão trabalhando em quais ordens de serviço.
 
-        Um veículo é designado a uma equipe de mecânicos para execução dos serviços.
+### Campos: ###
+idTeam (Chave Primária) - Identificador único da equipe.
+Mechanic - Chave estrangeira para o mecânico responsável.
+SO - Chave estrangeira para a ordem de serviço.
 
-    Equipe e Mecânicos:
+## 🔹 Vehicles (Veículos) ##
+Armazena informações dos veículos atendidos na oficina.
 
-        Uma equipe pode ter vários mecânicos, e um mecânico pode pertencer a uma única equipe.
+### Campos: ###
+idVeichles (Chave Primária) - Identificador único do veículo.
+Services - Chave estrangeira para os serviços realizados.
+Team - Chave estrangeira para a equipe responsável pelo veículo.
+VeichleOwner - Chave estrangeira para o cliente dono do veículo.
+VeichleType - Tipo do veículo (Carro, Moto, Caminhão).
+CarPlate - Placa do veículo.
+Brand - Marca do veículo.
+Model - Modelo do veículo.
 
-    OS e Serviços:
+# 🔍 Funcionalidades do Banco de Dados #
 
-        Uma OS pode conter vários serviços, e um serviço está associado a uma única OS.
+Com essa estrutura, o banco de dados permitirá realizar as seguintes operações:
 
-    OS e Autorização:
-
-        Cada OS requer uma autorização do cliente para execução dos serviços.
-
-    OS e Valor do Serviço:
-
-        Cada OS tem um valor associado, que é calculado com base nos serviços e peças.
+Cadastro e gerenciamento de clientes e mecânicos.
+Registro de ordens de serviço e acompanhamento do status.
+Armazenamento de serviços prestados, valores e peças utilizadas.
+Criação de equipes de trabalho para atender cada OS.
+Registro de veículos e seus respectivos proprietários.
+Controle de autorizações dos clientes para execução dos serviços.
